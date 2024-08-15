@@ -23,13 +23,14 @@ public class InputInvoker : MonoBehaviour
 
     private MazeInputActions.PlayerMazeMapActions Input => _inputActions.PlayerMazeMap;
 
-    //----------------------------------------------------------------------------------------------------
     #region Unity callbacks
 
     private void Awake()
     {
         _inputActions = new MazeInputActions();
         _movementCommands = new MovementCommands();
+
+        Cursor.lockState = CursorLockMode.Locked;
         Input.Enable();
     }
 
@@ -37,18 +38,6 @@ public class InputInvoker : MonoBehaviour
     {
         ManageQueues();
         ManageInputs();
-    }
-
-    private void OnEnable()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Input.Enable();
-    }
-
-    private void OnDisable()
-    {
-        Cursor.lockState = CursorLockMode.Confined;
-        Input.Disable();
     }
 
     #endregion
@@ -87,7 +76,7 @@ public class InputInvoker : MonoBehaviour
 
     #endregion
     //----------------------------------------------------------------------------------------------------
-    #region Running commands
+    #region Commands methods
 
     private void ExecuteMoveCommand(MovementDirection movementDirection)
     {
