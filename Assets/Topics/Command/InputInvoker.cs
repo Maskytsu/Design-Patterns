@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class InputInvoker : MonoBehaviour
 {
     [SerializeField] private MovementReciver _movementReciver;
+    [SerializeField] private TextMeshProUGUI _infoTMP;
+    [Header("Parameters")]
+    [SerializeField] private float _bufferTime = 0.5f;
+    [SerializeField] private int _queuesSize = 2;
+    [Space]
+    [SerializeField] private bool _isBufferOff = true;
 
     private MazeInputActions _inputActions;
     private MovementCommands _movementCommands;
@@ -16,10 +22,6 @@ public class InputInvoker : MonoBehaviour
     private Queue<ICommand> _undoQueue = new Queue<ICommand>();
 
     private MazeInputActions.PlayerMazeMapActions Input => _inputActions.PlayerMazeMap;
-
-    private bool _isBufferComplete = true;
-    private float _bufferTime = 0.5f;
-    private int _queuesSize = 2;
 
     //----------------------------------------------------------------------------------------------------
     #region Unity callbacks
@@ -53,30 +55,14 @@ public class InputInvoker : MonoBehaviour
     //----------------------------------------------------------------------------------------------------
     #region Update managements
 
-    private void ManageInputs()
-    {
-        if (Input.MoveForward.WasPerformedThisFrame()) RunMoveCommand(transform.forward);
-        if (Input.MoveBack.WasPerformedThisFrame()) RunMoveCommand(-transform.forward);
-        if (Input.MoveLeft.WasPerformedThisFrame()) RunMoveCommand(-transform.right);
-        if (Input.MoveRight.WasPerformedThisFrame()) RunMoveCommand(transform.right);
-
-
-        if (Input.RotateLeft.WasPerformedThisFrame()) RunRotateLeftCommand();
-        if (Input.RotateRight.WasPerformedThisFrame()) RunRotateRightCommand();
-
-        if (Input.Undo.WasPerformedThisFrame()) UndoPreviousCommand();
-    }
-
     private void ManageQueues()
     {
-        if (_isBufferComplete)
+        if (_isBufferOff)
         {
             if (_undoQueue.Count > 0)
             {
                 ICommand command = _undoQueue.Dequeue();
-                command.Undo();
-                _executeQueue.Clear();
-                StartCoroutine(CommandBuffer());
+                UndoCommand(command);
             }
             else if (_executeQueue.Count > 0)
             {
@@ -86,27 +72,40 @@ public class InputInvoker : MonoBehaviour
         }
     }
 
+    private void ManageInputs()
+    {
+        if (Input.MoveForward.WasPerformedThisFrame()) ExecuteMoveCommand(MovementDirection.FORWARD);
+        if (Input.MoveBack.WasPerformedThisFrame()) ExecuteMoveCommand(MovementDirection.BACK);
+        if (Input.MoveLeft.WasPerformedThisFrame()) ExecuteMoveCommand(MovementDirection.LEFT);
+        if (Input.MoveRight.WasPerformedThisFrame()) ExecuteMoveCommand(MovementDirection.RIGHT);
+
+        if (Input.RotateLeft.WasPerformedThisFrame()) ExecuteRotateLeftCommand();
+        if (Input.RotateRight.WasPerformedThisFrame()) ExecuteRotateRightCommand();
+
+        if (Input.Undo.WasPerformedThisFrame()) UndoPreviousCommand();
+    }
+
     #endregion
     //----------------------------------------------------------------------------------------------------
     #region Running commands
 
-    private void RunMoveCommand(Vector3 movementVector)
+    private void ExecuteMoveCommand(MovementDirection movementDirection)
     {
-        if (_isBufferComplete)
+        if (_isBufferOff)
         {
-            ICommand command = new MovementCommands.MoveCommand(_movementReciver, movementVector);
+            ICommand command = new MovementCommands.MoveCommand(_movementReciver, transform, movementDirection);
             ExecuteCommand(command);
         }
         else if (_executeQueue.Count + _undoQueue.Count <= _queuesSize)
         {
-            ICommand command = new MovementCommands.MoveCommand(_movementReciver, movementVector);
+            ICommand command = new MovementCommands.MoveCommand(_movementReciver, transform, movementDirection);
             _executeQueue.Enqueue(command);
         }
     }
 
-    private void RunRotateLeftCommand()
+    private void ExecuteRotateLeftCommand()
     {
-        if (_isBufferComplete)
+        if (_isBufferOff)
         {
             ICommand command = new MovementCommands.RotateLeftCommand(_movementReciver);
             ExecuteCommand(command);
@@ -118,9 +117,9 @@ public class InputInvoker : MonoBehaviour
         }
     }
 
-    private void RunRotateRightCommand()
+    private void ExecuteRotateRightCommand()
     {
-        if (_isBufferComplete)
+        if (_isBufferOff)
         {
             ICommand command = new MovementCommands.RotateRightCommand(_movementReciver);
             ExecuteCommand(command);
@@ -134,11 +133,10 @@ public class InputInvoker : MonoBehaviour
 
     private void UndoPreviousCommand()
     {
-        if(_undoStack.Count > 0 && _isBufferComplete)
+        if(_undoStack.Count > 0 && _isBufferOff)
         {
             ICommand command = _undoStack.Pop();
-            command.Undo();
-            StartCoroutine(CommandBuffer());
+            UndoCommand(command);
         }
         else if (_undoStack.Count > 0 && _executeQueue.Count + _undoQueue.Count <= _queuesSize)
         {
@@ -152,16 +150,25 @@ public class InputInvoker : MonoBehaviour
     #region Utility methods
     private void ExecuteCommand(ICommand command)
     {
+        _infoTMP.text = "Last used input:\n" + command.ReturnInfoString();
         command.Execute();
         _undoStack.Push(command);
         StartCoroutine(CommandBuffer());
     }
 
+    private void UndoCommand(ICommand command)
+    {
+        _infoTMP.text = "Last used input:\nUndo";
+        command.Undo();
+        _executeQueue.Clear();
+        StartCoroutine(CommandBuffer());
+    }
+
     private IEnumerator CommandBuffer()
     {
-        _isBufferComplete = false;
+        _isBufferOff = false;
         yield return new WaitForSeconds(_bufferTime);
-        _isBufferComplete = true;
+        _isBufferOff = true;
     }
     #endregion
 }
