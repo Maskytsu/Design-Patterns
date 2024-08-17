@@ -106,7 +106,7 @@ public partial class @MazeInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""08d3a34e-cbde-4bdc-9a88-a52ed397ec4f"",
-                    ""path"": ""<Keyboard>/ctrl"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

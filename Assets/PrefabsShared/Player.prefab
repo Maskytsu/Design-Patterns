@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8107324399679295668}
   - component: {fileID: 6675103021247452569}
   - component: {fileID: 898606858135611238}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MainCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 9173395245954770479}
   - component: {fileID: 7267958871915305052}
   - component: {fileID: 4537738209351062642}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -216,7 +216,7 @@ MonoBehaviour:
   _pullingVelocity: 20
   _groundMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
   _speed: 15
   _mouseSensivity: 15
 --- !u!1 &5889555161444239413
@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 3081311013034855448}
   - component: {fileID: 8718370464902349556}
   - component: {fileID: 5085315163586657844}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -311,7 +311,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8320820494151957305}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
