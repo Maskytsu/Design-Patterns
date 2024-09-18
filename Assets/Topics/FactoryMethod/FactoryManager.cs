@@ -6,6 +6,7 @@ public class FactoryManager : MonoBehaviour
 {
     private RandomPlaceFactory _randomPlaceFactory;
     private RandomTypeFactory _randomTypeFactory;
+    //V could be a dict to easly search for specific cubes, but then they would need to be signed
     private List<ICube> _cubes = new List<ICube>();
     private void Awake()
     {
