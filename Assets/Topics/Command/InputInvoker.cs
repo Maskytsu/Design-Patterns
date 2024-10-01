@@ -24,7 +24,6 @@ public class InputInvoker : MonoBehaviour
     private MazeInputActions.PlayerMazeMapActions Input => _inputActions.PlayerMazeMap;
 
     #region Unity callbacks
-
     private void Awake()
     {
         _inputActions = new MazeInputActions();
@@ -39,11 +38,8 @@ public class InputInvoker : MonoBehaviour
         ManageQueues();
         ManageInputs();
     }
-
     #endregion
-    //----------------------------------------------------------------------------------------------------
     #region Update managements
-
     private void ManageQueues()
     {
         if (_isBufferOff)
@@ -73,11 +69,8 @@ public class InputInvoker : MonoBehaviour
 
         if (Input.Undo.WasPerformedThisFrame()) UndoPreviousCommand();
     }
-
     #endregion
-    //----------------------------------------------------------------------------------------------------
     #region Commands methods
-
     private void ExecuteMoveCommand(MovementDirection movementDirection)
     {
         if (_isBufferOff)
@@ -133,9 +126,7 @@ public class InputInvoker : MonoBehaviour
             _undoQueue.Enqueue(command);
         }
     }
-
     #endregion
-    //----------------------------------------------------------------------------------------------------
     #region Utility methods
     private void ExecuteCommand(ICommand command)
     {
