@@ -9197,6 +9197,11 @@ PrefabInstance:
       propertyPath: _infoTMP
       value: 
       objectReference: {fileID: 1643160785}
+    - target: {fileID: 3014026659057603600, guid: 83d6fdd0b7fdfef4a98b37bd488b4b57,
+        type: 3}
+      propertyPath: _inputInfoTMP
+      value: 
+      objectReference: {fileID: 1643160785}
     - target: {fileID: 7249941275089092833, guid: 83d6fdd0b7fdfef4a98b37bd488b4b57,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

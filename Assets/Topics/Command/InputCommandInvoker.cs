@@ -3,46 +3,39 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class InputInvoker : MonoBehaviour
+public class InputCommandInvoker : MonoBehaviour
 {
     [SerializeField] private MovementReciver _movementReciver;
     [SerializeField] private TextMeshProUGUI _inputInfoTMP;
     [Header("Parameters")]
-    [SerializeField] private float _bufferTime = 0.5f;
+    [SerializeField] private float _commandBufferTime = 0.5f;
     [SerializeField] private int _queuesMaxSize = 2;
-    [Space]
-    [SerializeField] private bool _isBufferOff = true;
-
-    private MazeInputActions _inputActions;
-    private MovementCommands _movementCommands;
 
     private Stack<ICommand> _undoStack = new Stack<ICommand>();
 
     private Queue<ICommand> _executeQueue = new Queue<ICommand>();
     private Queue<ICommand> _undoQueue = new Queue<ICommand>();
+    private bool _isCommandBufferOff = true;
 
+    private MazeInputActions _inputActions;
     private MazeInputActions.PlayerMazeMapActions InputMap => _inputActions.PlayerMazeMap;
 
     #region Unity callbacks
     private void Awake()
     {
-        _inputActions = new MazeInputActions();
-        _movementCommands = new MovementCommands();
-
-        Cursor.lockState = CursorLockMode.Locked;
-        InputMap.Enable();
+        InitializeInput();
     }
 
     private void Update()
     {
-        ManageDequeuing();
+        ManageCommandDequeuing();
         ManageInputs();
     }
     #endregion
     #region Update managements
-    private void ManageDequeuing()
+    private void ManageCommandDequeuing()
     {
-        if (_isBufferOff)
+        if (_isCommandBufferOff)
         {
             if (_undoQueue.Count > 0)
             {
@@ -73,7 +66,7 @@ public class InputInvoker : MonoBehaviour
     #region Commands methods
     private void ExecuteMoveCommand(MovementDirection movementDirection)
     {
-        if (_isBufferOff)
+        if (_isCommandBufferOff)
         {
             ICommand command = new MovementCommands.MoveCommand(_movementReciver, transform, movementDirection);
             ExecuteCommand(command);
@@ -87,7 +80,7 @@ public class InputInvoker : MonoBehaviour
 
     private void ExecuteRotateCommand(RotationDirection rotationDirection)
     {
-        if (_isBufferOff)
+        if (_isCommandBufferOff)
         {
             ICommand command = new MovementCommands.RotateCommand(_movementReciver, rotationDirection);
             ExecuteCommand(command);
@@ -101,7 +94,7 @@ public class InputInvoker : MonoBehaviour
 
     private void UndoPreviousCommand()
     {
-        if(_undoStack.Count > 0 && _isBufferOff)
+        if(_undoStack.Count > 0 && _isCommandBufferOff)
         {
             ICommand command = _undoStack.Pop();
             UndoCommand(command);
@@ -114,6 +107,13 @@ public class InputInvoker : MonoBehaviour
     }
     #endregion
     #region Utility methods
+    private void InitializeInput()
+    {
+        _inputActions = new MazeInputActions();
+        Cursor.lockState = CursorLockMode.Locked;
+        InputMap.Enable();
+    }
+
     private void ExecuteCommand(ICommand command)
     {
         _inputInfoTMP.text = "Last used input:\n" + command.ReturnInfoString();
@@ -132,9 +132,9 @@ public class InputInvoker : MonoBehaviour
 
     private IEnumerator CommandBuffer()
     {
-        _isBufferOff = false;
-        yield return new WaitForSeconds(_bufferTime);
-        _isBufferOff = true;
+        _isCommandBufferOff = false;
+        yield return new WaitForSeconds(_commandBufferTime);
+        _isCommandBufferOff = true;
     }
     #endregion
 }
