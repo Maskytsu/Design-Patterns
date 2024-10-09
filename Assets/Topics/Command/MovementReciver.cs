@@ -1,14 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-public enum MovementDirection
-{
-    FORWARD,
-    BACK,
-    LEFT,
-    RIGHT
-}
-
 public class MovementReciver : MonoBehaviour
 {
     [SerializeField] private LayerMask _obstacleLayer;
@@ -30,14 +22,9 @@ public class MovementReciver : MonoBehaviour
         else Debug.Log("Can't move there");
     }
 
-    public void RotateLeft()
+    public void Rotate(Vector3 directionVector)
     {
-        StartCoroutine(RotateToSide(Quaternion.Euler(0, -90, 0)));
-    }
-
-    public void RotateRight()
-    {
-        StartCoroutine(RotateToSide(Quaternion.Euler(0, 90, 0)));
+        StartCoroutine(RotateToSide(Quaternion.Euler(directionVector)));
     }
 
     private IEnumerator MoveToDestination(Vector3 directionVector)

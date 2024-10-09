@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class PatrolingEnemyState : EnemyState
@@ -8,6 +10,7 @@ public class PatrolingEnemyState : EnemyState
 
     public PatrolingEnemyState(EnemyStateMachine enemyStateMachine)
     {
+        StateName = "Patroling state";
         _enemyStateMachine = enemyStateMachine;
         _randomDirection = Random.Range(0, 2) == 1 ? 1 : -1;
     }

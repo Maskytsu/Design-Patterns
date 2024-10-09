@@ -5,6 +5,7 @@ public class FollowingEnemyState : EnemyState
 {
     public FollowingEnemyState(EnemyStateMachine enemyStateMachine)
     {
+        StateName = "Following state";
         _enemyStateMachine = enemyStateMachine;
     }
 

@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 
 public abstract class EnemyState
 {
+    public string StateName;
+
     protected EnemyStateMachine _enemyStateMachine;
     protected float _rayDistance = 5f;
     protected Transform transform => _enemyStateMachine.transform;

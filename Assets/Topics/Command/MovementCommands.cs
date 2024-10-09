@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.GridBrushBase;
 
 public class MovementCommands
 {
@@ -45,53 +46,56 @@ public class MovementCommands
         }
     }
 
-    public class RotateLeftCommand : ICommand
+    public class RotateCommand : ICommand
     {
         private MovementReciver _movementReciver;
+        private RotationDirection _rotationDirection;
 
-        public RotateLeftCommand(MovementReciver movementReciver)
+        public RotateCommand(MovementReciver movementReciver, RotationDirection rotationDirection)
         {
             _movementReciver = movementReciver;
+            _rotationDirection = rotationDirection;
         }
 
         public void Execute()
         {
-            _movementReciver.RotateLeft();
+            Vector3 directionVector = DirectionToVector(_rotationDirection);
+            _movementReciver.Rotate(directionVector);
         }
 
         public void Undo()
         {
-            _movementReciver.RotateRight();
+            Vector3 directionVector = -DirectionToVector(_rotationDirection);
+            _movementReciver.Rotate(directionVector);
         }
 
         public string ReturnInfoString()
         {
             return "Rotation";
         }
-    }
 
-    public class RotateRightCommand : ICommand
-    {
-        private MovementReciver _movementReciver;
-
-        public RotateRightCommand(MovementReciver movementReciver)
+        private Vector3 DirectionToVector(RotationDirection rotationDirection)
         {
-            _movementReciver = movementReciver;
-        }
+            Vector3 vector = Vector3.zero;
 
-        public void Execute()
-        {
-            _movementReciver.RotateRight();
-        }
+            if (rotationDirection == RotationDirection.LEFT) vector = new Vector3(0, -90, 0);
+            else if (rotationDirection == RotationDirection.RIGHT) vector = new Vector3(0, 90, 0);
 
-        public void Undo()
-        {
-            _movementReciver.RotateLeft();
-        }
-
-        public string ReturnInfoString()
-        {
-            return "Rotation";
+            return vector;
         }
     }
+}
+
+public enum MovementDirection
+{
+    FORWARD,
+    BACK,
+    LEFT,
+    RIGHT
+}
+
+public enum RotationDirection
+{
+    LEFT,
+    RIGHT
 }
